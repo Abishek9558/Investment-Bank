@@ -9,6 +9,11 @@ public class Main {
         Scanner scanner= new Scanner(System.in);
         boolean running = true;
 
+        List<Transaction> transactions = TransactionOperator.loadTransactions("src/main/resources/transactions.csv");
+
+        for (Transaction t : transactions) {
+            System.out.println(t.getDate() + " " + t.getTime() + " | " + t.getDescription() + " | " + t.getVendor() + " | " + t.getAmount());
+
         while (running) {
             System.out.println("\nHome Screen:");
             System.out.println("D) Add Deposit   P) Make Payment (Debit)   L) Ledger   X) Exit");
