@@ -1,15 +1,25 @@
 package com.pluralsight;
-import java.util.*;
-import java.time.*;
+
+import java.time.LocalDate;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Scanner;
 
 public class Ledger {
-    private  TransactionOperator = new TransactionOperator();
+    private List<Transaction> transactions;
 
+    public Ledger(List<Transaction> transactions) {
+        this.transactions = transactions;
+    }
+
+    // Display the ledger menu
     public void displayLedger() {
         Scanner scanner = new Scanner(System.in);
-        List<Transaction> transactions = operator.loadTransactions();
-        transactions.sort(Comparator.comparing(Transaction::getDate).reversed()
-                .thenComparing(Transaction::getTime).reversed());
+
+        // Sort by date+time DESC (newest first)
+        transactions.sort(Comparator.comparing(Transaction::getDate)
+                .thenComparing(Transaction::getTime)
+                .reversed());
 
         boolean backToHome = false;
         while (!backToHome) {
@@ -23,13 +33,17 @@ public class Ledger {
                     transactions.forEach(System.out::println);
                     break;
                 case "D":
-                    transactions.stream().filter(t -> t.getAmount() > 0).forEach(System.out::println);
+                    transactions.stream()
+                            .filter(t -> t.getAmount() > 0)
+                            .forEach(System.out::println);
                     break;
                 case "P":
-                    transactions.stream().filter(t -> t.getAmount() < 0).forEach(System.out::println);
+                    transactions.stream()
+                            .filter(t -> t.getAmount() < 0)
+                            .forEach(System.out::println);
                     break;
                 case "R":
-                    displayReports(transactions);
+                    displayReports(scanner);
                     break;
                 case "H":
                     backToHome = true;
@@ -40,39 +54,94 @@ public class Ledger {
         }
     }
 
-    private void displayReports(List<Transaction> transactions) {
-        Scanner scanner = new Scanner(System.in);
+    // Reports submenu
+    private void displayReports(Scanner scanner) {
         boolean back = false;
         while (!back) {
             System.out.println("\nReports:");
             System.out.println("1) Month to Date   2) Previous Month   3) Year to Date   4) Previous Year   5) Search by Vendor   0) Back");
             System.out.print("Choose an option: ");
-            String choice = scanner.nextLine().trim();
+            int choice = scanner.nextInt();
+            scanner.nextLine();
+
 
             LocalDate today = LocalDate.now();
 
             switch (choice) {
-                case "1":
-                    filterByMonth(transactions, today.getYear(), today.getMonthValue());
+                case 1:
+                    System.out.println("Month to date report");
+
+                    LocalDate firstDayOfMonth = today.withDayOfMonth(1);
+
+                    for (Transaction transaction : transactions) {
+                        LocalDate eDate = transaction.getDate();
+                        if (!eDate.isBefore(firstDayOfMonth) && !eDate.isAfter(today)) {
+                            System.out.println(transaction.getDate() + " | " +
+                                    transaction.getTime() + " | " +
+                                    transaction.getDescription() + " | " +
+                                    transaction.getVendor() + " | " +
+                                    transaction.getAmount());
+                        }
+                    }
                     break;
-                case "2":
-                    LocalDate previousMonth = today.minusMonths(1);
-                    filterByMonth(transactions, previousMonth.getYear(), previousMonth.getMonthValue());
+                case 2:
+                    System.out.println("Previous month report");
+                    LocalDate firstDayPrevMonth = today.minusMonths(1).withDayOfMonth(1);
+                    LocalDate lastDayPrevMonth = firstDayPrevMonth.withDayOfMonth(firstDayPrevMonth.lengthOfMonth());
+                    for (Transaction transaction : transactions) {
+                        LocalDate eDate = transaction.getDate();
+                        if (!eDate.isBefore(firstDayPrevMonth) && !eDate.isAfter(lastDayPrevMonth)) {
+                            System.out.println(transaction.getDate() + " | " +
+                                    transaction.getTime() + " | " +
+                                    transaction.getDescription() + " | " +
+                                    transaction.getVendor() + " | " +
+                                    transaction.getAmount());
+                        }
+                    }
                     break;
-                case "3":
-                    filterByYear(transactions, today.getYear());
+                case 3:
+                    System.out.println("Year to date report");
+                    LocalDate firstDayOfYear = today.withDayOfYear(1);
+                    for (Transaction transaction : transactions) {
+                        LocalDate eDate = transaction.getDate();
+                        if (!eDate.isBefore(firstDayOfYear) && !eDate.isAfter(today)) {
+                            System.out.println(transaction.getDate() + " | " +
+                                    transaction.getTime() + " | " +
+                                    transaction.getDescription() + " | " +
+                                    transaction.getVendor() + " | " +
+                                    transaction.getAmount());
+                        }
+                    }
                     break;
-                case "4":
-                    filterByYear(transactions, today.getYear() - 1);
+                case 4:
+                    System.out.println("Previous year report");
+                    LocalDate firstDayPrevYear = today.minusYears(1).withDayOfYear(1);
+                    LocalDate lastDayPrevYear = firstDayPrevYear.withDayOfYear(firstDayPrevYear.lengthOfYear());
+                    for (Transaction transaction : transactions) {
+                        LocalDate eDate = transaction.getDate();
+                        if (!eDate.isBefore(firstDayPrevYear) && !eDate.isAfter(lastDayPrevYear)) {
+                            System.out.println(transaction.getDate() + " | " +
+                                    transaction.getTime() + " | " +
+                                    transaction.getDescription() + " | " +
+                                    transaction.getVendor() + " | " +
+                                    transaction.getAmount());
+                        }
+                    }
                     break;
-                case "5":
+                case 5:
                     System.out.print("Enter vendor name: ");
                     String vendor = scanner.nextLine();
-                    transactions.stream()
-                            .filter(t -> t.getVendor().equalsIgnoreCase(vendor))
-                            .forEach(System.out::println);
+                    for (Transaction transaction : transactions) {
+                        if (transaction.getVendor().equalsIgnoreCase(vendor)) {
+                            System.out.println(transaction.getDate() + " | " +
+                                    transaction.getTime() + " | " +
+                                    transaction.getDescription() + " | " +
+                                    transaction.getVendor() + " | " +
+                                    transaction.getAmount());
+                        }
+                    }
                     break;
-                case "0":
+                case 0:
                     back = true;
                     break;
                 default:
@@ -81,23 +150,15 @@ public class Ledger {
         }
     }
 
-    private void filterByMonth(List<Transaction> transactions, int year, int month) {
-        transactions.stream()
-                .filter(t -> {
-                    String[] dateParts = t.getDate().split("-");
-                    return Integer.parseInt(dateParts[0]) == year && Integer.parseInt(dateParts[1]) == month;
-                })
-                .forEach(System.out::println);
-    }
-
-    private void filterByYear(List<Transaction> transactions, int year) {
-        transactions.stream()
-                .filter(t -> {
-                    String[] dateParts = t.getDate().split("-");
-                    return Integer.parseInt(dateParts[0]) == year;
-                })
-                .forEach(System.out::println);
-
-}
-
+//    private void filterByMonth(int year, int month) {
+//        transactions.stream()
+//                .filter(t -> t.getDate().getYear() == year && t.getDate().getMonthValue() == month)
+//                .forEach(System.out::println);
+//    }
+//
+//    private void filterByYear(int year) {
+//        transactions.stream()
+//                .filter(t -> t.getDate().getYear() == year)
+//                .forEach(System.out::println);
+//    }
 }

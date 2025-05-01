@@ -2,17 +2,16 @@ package com.pluralsight;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        Scanner scanner= new Scanner(System.in);
+        Scanner scanner = new Scanner(System.in);
         boolean running = true;
 
         List<Transaction> transactions = TransactionOperator.loadTransactions("src/main/resources/transactions.csv");
-
-        for (Transaction t : transactions) {
-            System.out.println(t.getDate() + " " + t.getTime() + " | " + t.getDescription() + " | " + t.getVendor() + " | " + t.getAmount());
+        Ledger ledger = new Ledger(transactions);
 
         while (running) {
             System.out.println("\nHome Screen:");
@@ -22,13 +21,13 @@ public class Main {
 
             switch (choice) {
                 case "D":
-                    addTransaction(scanner, true);
+                    addTransaction(scanner, transactions, true);
                     break;
                 case "P":
-                    addTransaction(scanner, false);
+                    addTransaction(scanner, transactions, false);
                     break;
                 case "L":
-                    Ledger.displayLedger();
+                    ledger.displayLedger();
                     break;
                 case "X":
                     running = false;
@@ -40,21 +39,34 @@ public class Main {
         }
     }
 
-    private static void addTransaction(Scanner scanner, boolean isDeposit) {
+    private static void addTransaction(Scanner scanner, List<Transaction> transactions, boolean isDeposit) {
         System.out.print("Enter description: ");
         String description = scanner.nextLine();
+
         System.out.print("Enter vendor: ");
         String vendor = scanner.nextLine();
+
         System.out.print("Enter amount: ");
         double amount = Double.parseDouble(scanner.nextLine());
-        if (!isDeposit) amount = -Math.abs(amount);
 
-        String date = LocalDate.now().toString();
-        String time = LocalTime.now().withNano(0).toString();
+        if (!isDeposit) {
+            amount = -Math.abs(amount);  // make sure it's negative
+        } else {
+            amount = Math.abs(amount);   // make sure it's positive
+        }
 
-        Transaction transaction = new Transaction(date, time, description, vendor, amount);
-        Ledger.saveTransaction(transaction);
-        System.out.println("Transaction saved!");
+        Transaction newTransaction = new Transaction(
+                LocalDate.now(),
+                LocalTime.now(),
+                description,
+                vendor,
+                amount
+        );
+
+        transactions.add(newTransaction);
+        TransactionOperator.saveTransaction("src/main/resources/transactions.csv", newTransaction);
+
+        System.out.println("Transaction saved successfully!");
     }
 }
 

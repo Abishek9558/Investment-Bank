@@ -9,6 +9,7 @@ import java.util.List;
 
 // reading and the writing of the class
 public class TransactionOperator {
+
     public static List<Transaction> loadTransactions(String filename) {
         // read from csv and return the list
         List<Transaction> transactions = new ArrayList<>();
@@ -23,10 +24,11 @@ public class TransactionOperator {
                 LocalTime time = LocalTime.parse(parts[1]);
                 String description = parts[2];
                 String vendor = parts[3];
-               Double amount = new Double(parts[4]);
+                double amount =  Double.parseDouble(parts[4]);
 
                 Transaction transaction = new Transaction(date, time, description, vendor, amount);
-                transaction.add(transaction)
+                transactions.add(transaction);
+
             }
             bufferedReader.close();
         } catch (IOException e) {
@@ -35,7 +37,7 @@ public class TransactionOperator {
         return transactions;
     }
     public static void saveTransaction(String filename, Transaction transaction) {
-        // add transaction to csv file
+        // save to csv
         try {
             BufferedWriter buffWriter = new BufferedWriter(new FileWriter(filename, true));
 
