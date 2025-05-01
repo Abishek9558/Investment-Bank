@@ -15,7 +15,7 @@ public class Main {
 
         while (running) {
             System.out.println("\nHome Screen:");
-            System.out.println("D) Add Deposit   P) Make Payment (Debit)   L) Ledger   X) Exit");
+            System.out.println("\nD) Add Deposit   \nP) Make Payment (Debit)   \nL) Ledger   \nX) Exit");
             System.out.print("Choose an option: ");
             String choice = scanner.nextLine().trim().toUpperCase();
 
@@ -55,20 +55,22 @@ public class Main {
             amount = Math.abs(amount);   // make sure it's positive
         }
 
-        Transaction newTransaction = new Transaction(
-                LocalDate.now(),
-                LocalTime.now(),
-                description,
-                vendor,
-                amount
-        );
+                Transaction newTransaction = new Transaction(
+                        LocalDate.now(),
+                        LocalTime.now(),
+                        description,
+                        vendor,
+                        amount
+                );
 
-        transactions.add(newTransaction);
-        TransactionOperator.saveTransaction("src/main/resources/transactions.csv", newTransaction);
+                transactions.add(newTransaction);
+                TransactionOperator.saveTransaction("src/main/resources/transactions.csv", newTransaction);
 
-        System.out.println("Transaction saved successfully!");
-    }
-}
+                System.out.println("Transaction saved successfully!");
+            }
+        }
+
+
 
 
 

@@ -24,23 +24,32 @@ public class Ledger {
         boolean backToHome = false;
         while (!backToHome) {
             System.out.println("\nLedger:");
-            System.out.println("A) All   D) Deposits   P) Payments   R) Reports   H) Home");
+            System.out.println("\nA) All   \nD) Deposits   \nP) Payments   \nR) Reports   \nH) Home");
             System.out.print("Choose an option: ");
             String choice = scanner.nextLine().trim().toUpperCase();
 
             switch (choice) {
                 case "A":
-                    transactions.forEach(System.out::println);
+                    // Print all transactions
+                    for (Transaction transaction : transactions) {
+                        System.out.println(transaction);
+                    }
                     break;
                 case "D":
-                    transactions.stream()
-                            .filter(t -> t.getAmount() > 0)
-                            .forEach(System.out::println);
+                    // Print only deposits (amount > 0)
+                    for (Transaction transaction : transactions) {
+                        if (transaction.getAmount() > 0) {
+                            System.out.println(transaction);
+                        }
+                    }
                     break;
                 case "P":
-                    transactions.stream()
-                            .filter(t -> t.getAmount() < 0)
-                            .forEach(System.out::println);
+                    // Print only payments (amount < 0)
+                    for (Transaction transaction : transactions) {
+                        if (transaction.getAmount() < 0) {
+                            System.out.println(transaction);
+                        }
+                    }
                     break;
                 case "R":
                     displayReports(scanner);
@@ -59,7 +68,7 @@ public class Ledger {
         boolean back = false;
         while (!back) {
             System.out.println("\nReports:");
-            System.out.println("1) Month to Date   2) Previous Month   3) Year to Date   4) Previous Year   5) Search by Vendor   0) Back");
+            System.out.println("\n1) Month to Date   \n2) Previous Month   \n3) Year to Date   \n4) Previous Year   \n5) Search by Vendor   \n0) Back");
             System.out.print("Choose an option: ");
             int choice = scanner.nextInt();
             scanner.nextLine();
@@ -149,16 +158,5 @@ public class Ledger {
             }
         }
     }
-
-//    private void filterByMonth(int year, int month) {
-//        transactions.stream()
-//                .filter(t -> t.getDate().getYear() == year && t.getDate().getMonthValue() == month)
-//                .forEach(System.out::println);
-//    }
-//
-//    private void filterByYear(int year) {
-//        transactions.stream()
-//                .filter(t -> t.getDate().getYear() == year)
-//                .forEach(System.out::println);
-//    }
 }
+
