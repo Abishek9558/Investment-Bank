@@ -48,11 +48,13 @@ public class Main {
 
         System.out.print("Enter amount: ");
         double amount = Double.parseDouble(scanner.nextLine());
+        if (isDeposit) {
+            if (amount <= 0) {
+                System.out.println("Deposit amount must be positive. Transaction cancelled."); // cannot store negative value in deposite.
+                return;
+            }
 
-        if (!isDeposit) {
-            amount = -Math.abs(amount);  // make sure it's negative
-        } else {
-            amount = Math.abs(amount);   // make sure it's positive
+            amount = amount;
         }
 
                 Transaction newTransaction = new Transaction(
@@ -60,8 +62,7 @@ public class Main {
                         LocalTime.now(),
                         description,
                         vendor,
-                        amount
-                );
+                        amount);
 
                 transactions.add(newTransaction);
                 TransactionOperator.saveTransaction("src/main/resources/transactions.csv", newTransaction);
