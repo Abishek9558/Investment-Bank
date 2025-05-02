@@ -10,6 +10,7 @@ public class Transaction {
     private String vendor;
     private double amount;
 
+    //constructor
     public Transaction(LocalDate date, LocalTime time, String description, String vendor, double amount) {
         this.date = date;
         this.time = time;
@@ -18,7 +19,7 @@ public class Transaction {
         this.amount = amount;
     }
 
-    // Getters and toString()
+    // Getters and setters
 
 
     public LocalDate getDate() {
@@ -60,7 +61,17 @@ public class Transaction {
     public void setAmount(double amount) {
         this.amount = amount;
     }
-}
+
+        @Override
+        public String toString() {
+            return date + " | " +
+                    time + " | " +
+                    description + " | " +
+                    vendor + " | " +
+                    amount;
+        }
+    }
+
 
 
 

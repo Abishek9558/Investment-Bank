@@ -16,7 +16,7 @@ public class Ledger {
     public void displayLedger() {
         Scanner scanner = new Scanner(System.in);
 
-        // Sort by date+time DESC (newest first)
+        // Sort by date+time
         transactions.sort(Comparator.comparing(Transaction::getDate)
                 .thenComparing(Transaction::getTime)
                 .reversed());
@@ -36,7 +36,7 @@ public class Ledger {
                     }
                     break;
                 case "D":
-                    // Print only deposits (amount > 0)
+                    // Print only deposits
                     for (Transaction transaction : transactions) {
                         if (transaction.getAmount() > 0) {
                             System.out.println(transaction);
@@ -44,7 +44,7 @@ public class Ledger {
                     }
                     break;
                 case "P":
-                    // Print only payments (amount < 0)
+                    // Print only payments
                     for (Transaction transaction : transactions) {
                         if (transaction.getAmount() < 0) {
                             System.out.println(transaction);
@@ -52,10 +52,10 @@ public class Ledger {
                     }
                     break;
                 case "R":
-                    displayReports(scanner);
+                    displayReports(scanner);//open the submenu
                     break;
                 case "H":
-                    backToHome = true;
+                    backToHome = true;//back home
                     break;
                 default:
                     System.out.println("Invalid option.");
@@ -77,7 +77,7 @@ public class Ledger {
             LocalDate today = LocalDate.now();
 
             switch (choice) {
-                case 1:
+                case 1:// filter transaction from current month
                     System.out.println("Month to date report");
 
                     LocalDate firstDayOfMonth = today.withDayOfMonth(1);
@@ -93,7 +93,7 @@ public class Ledger {
                         }
                     }
                     break;
-                case 2:
+                case 2:// from previous month
                     System.out.println("Previous month report");
                     LocalDate firstDayPrevMonth = today.minusMonths(1).withDayOfMonth(1);
                     LocalDate lastDayPrevMonth = firstDayPrevMonth.withDayOfMonth(firstDayPrevMonth.lengthOfMonth());
@@ -108,7 +108,7 @@ public class Ledger {
                         }
                     }
                     break;
-                case 3:
+                case 3:// from current year
                     System.out.println("Year to date report");
                     LocalDate firstDayOfYear = today.withDayOfYear(1);
                     for (Transaction transaction : transactions) {
@@ -122,7 +122,7 @@ public class Ledger {
                         }
                     }
                     break;
-                case 4:
+                case 4:// frrom last year
                     System.out.println("Previous year report");
                     LocalDate firstDayPrevYear = today.minusYears(1).withDayOfYear(1);
                     LocalDate lastDayPrevYear = firstDayPrevYear.withDayOfYear(firstDayPrevYear.lengthOfYear());
@@ -137,7 +137,7 @@ public class Ledger {
                         }
                     }
                     break;
-                case 5:
+                case 5://from vendor name
                     System.out.print("Enter vendor name: ");
                     String vendor = scanner.nextLine();
                     for (Transaction transaction : transactions) {
@@ -151,7 +151,7 @@ public class Ledger {
                     }
                     break;
                 case 0:
-                    back = true;
+                    back = true;//back to previous menu
                     break;
                 default:
                     System.out.println("Invalid option.");

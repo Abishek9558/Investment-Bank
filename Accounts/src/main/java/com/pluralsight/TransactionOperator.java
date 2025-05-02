@@ -1,6 +1,5 @@
 package com.pluralsight;
 
-
 import java.io.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -11,7 +10,7 @@ import java.util.List;
 public class TransactionOperator {
 
     public static List<Transaction> loadTransactions(String filename) {
-        // read from csv and return the list
+        // read from csv file
         List<Transaction> transactions = new ArrayList<>();
 
         try {
@@ -19,7 +18,7 @@ public class TransactionOperator {
             String line;
             while ((line = bufferedReader.readLine()) != null) {
                 String[] parts = line.split("\\|");
-
+                //parsing
                 LocalDate date = LocalDate.parse(parts[0]);
                 LocalTime time = LocalTime.parse(parts[1]);
                 String description = parts[2];
@@ -46,7 +45,7 @@ public class TransactionOperator {
                     transaction.getDescription() + "|" +
                     transaction.getVendor() + "|" +
                     transaction.getAmount() + "|";
-
+                    // formatting
             buffWriter.write(line);
             buffWriter.newLine();
             buffWriter.close();
